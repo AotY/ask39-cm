@@ -131,7 +131,7 @@ def train_epochs():
             log_vf.write('epoch,loss,ppl,accuracy\n')
 
     valid_accus = []
-    for epoch in range(args.epochs):
+    for epoch in range(1, args.epochs + 1):
         print('[ Epoch', epoch, ']')
 
         start = time.time()
@@ -151,9 +151,8 @@ def train_epochs():
 
         valid_accus += [valid_accu]
 
-        model_state_dict = model.state_dict()
         checkpoint = {
-            'model': model_state_dict(),
+            'model': model.state_dict(),
             'settings': args,
             'epoch': epoch,
             'optimizer': optimizer.optimizer.state_dict(),
@@ -202,9 +201,9 @@ def train(epoch):
         dec_targets = dec_inputs[1:, :]
         dec_inputs = dec_inputs[:-1, :]
 
-        print('enc_inputs: ', enc_inputs.shape)
-        print(enc_inputs)
-        print(enc_lengths)
+        # print('enc_inputs: ', enc_inputs.shape)
+        # print(enc_inputs)
+        # print(enc_lengths)
 
         # print('dec_inputs: ', dec_inputs.shape)
         # print('dec_targets: ', dec_targets.shape)

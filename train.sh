@@ -9,7 +9,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 mkdir -p data/
 mkdir -p log/
-mkdir -p modles/
+mkdir -p models/
 
 python train.py \
     --data_path data/cleaned.question.txt \

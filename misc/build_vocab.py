@@ -20,6 +20,7 @@ parser.add_argument('--vocab_path', type=str, default='')
 args = parser.parse_args()
 
 args.vocab_size = int(args.vocab_size)
+print('vocab_size: ', args.vocab_size)
 
 
 def read_distribution():
@@ -29,17 +30,18 @@ def read_distribution():
             line = line.rstrip()
             try:
                 word, freq = line.split()
+                freq = int(freq)
+                freq_list.append((word, freq))
             except Exception as e:
                 print(line)
                 print(e)
-            freq = int(freq)
-            freq_list.append((word, freq))
 
     return freq_list
 
 
 def build_vocab():
     freq_list = read_distribution()
+    print('freq_list: ', len(freq_list))
 
     if args.min_count > 0:
         print('Clip tokens by min_count')
