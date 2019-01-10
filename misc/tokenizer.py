@@ -26,7 +26,7 @@ class Tokenizer:
             text = ' '.join(text)
 
         tokens = self.clean_str(text)
-        tokens = [token for token in tokens if len(token) > 0]
+        tokens = [token for token in tokens if len(token.split()) > 0]
         return tokens
 
     def clean_str(self, text):
@@ -41,7 +41,8 @@ class Tokenizer:
 
         text = self.datetime_re.sub('__datetime__', text)
 
-        tokens = jieba.cut(text)
+        tokens = list(jieba.cut(text))
+        #  print(tokens)
 
         new_tokens = []
         number_count = 0

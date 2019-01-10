@@ -68,6 +68,8 @@ def cleaning_stats():
             else:
                 q_ids_set.add(q_id)
 
+            #  print('q_id: %s' % q_id)
+
             # query
             genders = re.findall(r'患者性别：\w', query)
             if genders is not None and len(genders) > 0:
@@ -95,6 +97,7 @@ def cleaning_stats():
             q_tokens = tokenizer.tokenize(query)
             freq_dict.update(q_tokens)
             q_len_dict[len(q_tokens)] = q_len_dict.get(len(q_tokens), 0) + 1
+            #  print('q_tokens: {}'.format(q_tokens))
             if len(q_tokens) < args.min_len or len(q_tokens) > args.q_max_len:
                 continue
 
@@ -104,6 +107,7 @@ def cleaning_stats():
             r_tokens = tokenizer.tokenize(response)
             freq_dict.update(r_tokens)
             r_len_dict[len(r_tokens)] = r_len_dict.get(len(r_tokens), 0) + 1
+            #  print('r_tokens: {}'.format(r_tokens))
             if len(r_tokens) < args.min_len or len(r_tokens) > args.r_max_len:
                 continue
 
@@ -130,7 +134,8 @@ def cleaning_stats():
                 freq_dict.update(onset_tokens)
                 onset = ' '.join(onset_tokens)
 
-            cleaned_question_file.write('%s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s\n' %
+            #  print('q_id: %s' % q_id)
+            cleaned_question_file.write('%s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s\n' % \
                                         (q_id, d_id, q, r, sub, gender, age, onset, label))
 
     cleaned_question_file.close()
