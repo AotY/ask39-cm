@@ -8,6 +8,7 @@
 export CUDA_VISIBLE_DEVICES=0
 
 mkdir -p data/
+mkdir -p data/generated
 mkdir -p log/
 mkdir -p models/
 
@@ -39,7 +40,7 @@ python train.py \
     --save_mode all \
     --save_model models/ \
     --smoothing \
-    --task test \
+    --mode train \
     --checkpoint ./models/accu_36.093.pth \
 
 

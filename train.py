@@ -8,7 +8,6 @@ import sys
 import time
 import math
 import argparse
-
 import torch
 import torch.nn.functional as F
 
@@ -42,8 +41,9 @@ parser.add_argument('--max_grad_norm', type=float, default=5.0)
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--q_max_len', type=int, default=60)
 parser.add_argument('--r_max_len', type=int, default=55)
+parser.add_argument('--beam_size', type=int, default=10)
 parser.add_argument('--batch_size', type=int, help='')
-parser.add_argument('--val_split', type=float, default=0.08)
+parser.add_argument('--valid_split', type=float, default=0.08)
 parser.add_argument('--test_split', type=int, default=5)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--start_epoch', type=int, default=1)
@@ -54,9 +54,9 @@ parser.add_argument('--save_model', type=str, help='save path')
 parser.add_argument('--save_mode', type=str, choices=['all', 'best'], default='best')
 parser.add_argument('--checkpoint', type=str, help='checkpoint path')
 parser.add_argument('--smoothing', action='store_true')
-parser.add_argument('--task', type=str, help='train, valid, test')
 parser.add_argument('--log', type=str, help='save log.')
 parser.add_argument('--seed', type=str, help='random seed')
+parser.add_argument('--mode', type=str, help='train, eval, test')
 args = parser.parse_args()
 
 print(' '.join(sys.argv))
@@ -331,7 +331,7 @@ def test(epoch):
             # [batch_size, topk, max_len]
             beam_texts = generate_texts(vocab, args.batch_size, beam_outputs, decode_type='beam_search')
 
-            save_path = os.path.join(args.save_dir, 'generated/%d.txt' % epoch)
+            save_path = os.path.join(args.data_dir, 'generated/%d.txt' % epoch)
 
             save_generated_texts(epoch, greedy_texts, beam_texts, save_path)
 
@@ -377,17 +377,18 @@ def cal_loss(pred, gold, smoothing):
 
 if __name__ == '__main__':
     if args.checkpoint:
+        print('load checkpoint...')
         checkpoint = torch.load(args.checkpoint)
-        checkpoint = {
-            'model': model.state_dict(),
-            'settings': args,
-            'epoch': epoch,
-            'optimizer': optimizer.optimizer.state_dict(),
-            'valid_loss': valid_loss,
-            'valid_accu': valid_accu
-        }
+        # checkpoint = {
+            # 'model': model.state_dict(),
+            # 'settings': args,
+            # 'epoch': epoch,
+            # 'optimizer': optimizer.optimizer.state_dict(),
+            # 'valid_loss': valid_loss,
+            # 'valid_accu': valid_accu
+        # }
 
-        modelcheckpoint_epoch.load_state_dict(checkpoint['model'])
+        model.load_state_dict(checkpoint['model'])
         optimizer.optimizer.load_state_dict(checkpoint['optimizer'])
 
         args = checkpoint['settings']
@@ -407,9 +408,11 @@ if __name__ == '__main__':
               )
         )
     
-    if args.task == 'train':
+    # args.mode = 'test'
+    # args.beam_size = 10
+    if args.mode == 'train':
         train_epochs()
-    elif args.task == 'valid':
-        valid()
-    elif args.task == 'test':
-        test()
+    elif args.mode == 'eval':
+        eval(epoch)
+    elif args.mode == 'test':
+        test(epoch)

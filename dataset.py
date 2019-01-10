@@ -44,7 +44,7 @@ def load_data(config, vocab):
 
 
 def build_dataloader(config, datas):
-    valid_split = int(config.val_split * len(datas))
+    valid_split = int(config.valid_split * len(datas))
     test_split = int(config.batch_size * config.test_split)
 
     valid_dataset = Dataset(datas[:valid_split])

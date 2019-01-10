@@ -68,10 +68,10 @@ class CMModel(nn.Module):
                 dec_length):
         '''
         Args:
-            enc_inputs: [max_len, batch_size]
+            enc_inputs: [q_max_len, batch_size]
             en_length: [batch_size]
 
-            dec_inputs: [max_len, batch_size]
+            dec_inputs: [r_max_len, batch_size]
             dec_length: [batch_size]
         '''
         # [max_len, batch_size, hidden_size]
@@ -132,7 +132,7 @@ class CMModel(nn.Module):
         greedy_outputs = []
         input = torch.ones((1, self.config.batch_size),
                                dtype=torch.long, device=self.device) * SOS_ID
-        for i in range(self.config.max_len):
+        for i in range(self.config.r_max_len):
             output, dec_hidden, _ = self.rnn_decoder(
                 input,
                 dec_hidden,
@@ -193,12 +193,12 @@ class CMModel(nn.Module):
         beam = Beam(
             batch_size,
             beam_size,
-            self.config.max_len,
+            self.config.r_max_len,
             batch_position,
             EOS_ID
         )
 
-        for i in range(self.config.max_len):
+        for i in range(self.config.r_max_len):
             output, dec_hidden, _ = self.rnn_decoder(
                 input.view(1, -1),
                 dec_hidden,
