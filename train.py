@@ -4,6 +4,7 @@
 #
 
 import os
+import sys
 import time
 import math
 import argparse
@@ -52,6 +53,8 @@ parser.add_argument('--smoothing', action='store_true')
 parser.add_argument('--log', type=str, help='save log.')
 parser.add_argument('--seed', type=str, help='random seed')
 args = parser.parse_args()
+
+print("%s", ' '.join(sys.argv))
 
 torch.random.manual_seed(args.seed)
 device = torch.device(args.device)

@@ -67,10 +67,10 @@ class Attention(nn.Module):
         context = torch.bmm(attn, encoder_outputs.transpose(0, 1))
         context = context.transpose(0, 1) #[out_len, batch_size, hidden_size]
 
-        concat -> (out_len, batch_size, 2 * hidden_size)
+        #  concat -> (out_len, batch_size, 2 * hidden_size)
         combined = torch.cat((context, output), dim=2)
 
-        context -> (batch, out_len, hidden_size)
+        #  context -> (batch, out_len, hidden_size)
         context = torch.tanh(self.linear_out(combined.view(-1, 2 * hidden_size))).view(-1, batch_size, hidden_size)
 
         return context, attn
