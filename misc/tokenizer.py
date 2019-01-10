@@ -35,6 +35,10 @@ class Tokenizer:
         text = text.replace(':', ' : ')
         text = text.replace(',', ' , ')
 
+        text = text.replace('：', ' ： ')
+        text = text.replace('，', ' ， ')
+        text = text.replace('。', ' 。 ')
+
         text = self.datetime_re.sub('__datetime__', text)
 
         tokens = jieba.cut(text)

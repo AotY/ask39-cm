@@ -70,13 +70,13 @@ def cleaning_stats():
             genders = re.findall(r'患者性别：\w', query)
             if genders is not None and len(genders) > 0:
                 gender = genders[0].split('：')[1]
-                print('gender: %s' % gender)
+                #  print('gender: %s' % gender)
                 query = re.sub(r'患者性别：\w', '', query)
 
             ages = re.findall(r'患者年龄：\d+', query)
             if ages is not None and len(ages) > 0:
                 age = ages[0].split('：')[1]
-                print('age: %s' % age)
+                #  print('age: %s' % age)
                 query = re.sub(r'患者年龄：\d+', '', query)
 
             freq_dict.update(genders)
@@ -140,7 +140,7 @@ def cleaning_stats():
 def main():
     freq_dict, q_len_dict, r_len_dict = cleaning_stats()
     freq_list = sorted(freq_dict.items(), key=lambda item: item[1], reverse=True)
-    save_distribution(freq_dict, args.vocab_freq_path)
+    save_distribution(freq_list, args.vocab_freq_path)
 
     q_len_list = sorted(q_len_dict.items(), key=lambda item: item[0], reverse=False)
     save_distribution(q_len_list, os.path.join(args.save_dir, 'q.len.dist'))
