@@ -2,3 +2,20 @@
 
 *.pyc
 __pycache__
+
+
+
+### Data
+*.scel
+data/dict/
+data/raw.question.txt
+data/raw.doctor.txt
+data/cleaned.question.txt
+data/*.dist
+
+
+### log
+log/
+
+### models
+models/*.pth
