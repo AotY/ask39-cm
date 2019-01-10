@@ -11,7 +11,7 @@
 python misc/build_vocab.py \
     --vocab_freq_path ./data/vocab.freq.txt \
     --vocab_path ./data/vocab.id2word.dict \
-    --vocab_size 6e4 \
+    --vocab_size 3e4 \
     --min_count 3 \
 
 /

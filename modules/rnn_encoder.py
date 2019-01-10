@@ -35,7 +35,7 @@ class RNNEncoder(nn.Module):
         self.rnn = nn.GRU(
             input_size=self.embedding_size,
             hidden_size=self.hidden_size,
-            num_layers=config.encoder_num_layers,
+            num_layers=config.enc_num_layers,
             bidirectional=config.bidirectional,
             dropout=config.dropout
         )

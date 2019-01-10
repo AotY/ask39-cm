@@ -31,7 +31,7 @@ class RNNDecoder(nn.Module):
         self.rnn = nn.GRU(
             input_size=self.embedding_size,
             hidden_size=config.hidden_size,
-            num_layers=config.decoder_num_layers,
+            num_layers=config.dec_num_layers,
             dropout=config.dropout
         )
 

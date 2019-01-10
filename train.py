@@ -21,22 +21,24 @@ from vocab import Vocab
 from vocab import PAD_ID
 from cm_model import CMModel
 from dataset import load_data, build_dataloader
-from utils import generate_texts, save_generated_texts
+from misc.utils import generate_texts, save_generated_texts
 
 # Parse argument for language to train
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, help='')
+parser.add_argument('--data_dir', type=str, help='')
 parser.add_argument('--vocab_path', type=str, help='')
 parser.add_argument('--vocab_size', type=int, help='')
 parser.add_argument('--embedding_size', type=int)
 parser.add_argument('--hidden_size', type=int)
 parser.add_argument('--bidirectional', action='store_true')
-parser.add_argument('--num_layers', type=int)
+parser.add_argument('--enc_num_layers', type=int)
+parser.add_argument('--dec_num_layers', type=int)
 parser.add_argument('--dropout', type=float)
 parser.add_argument('--teacher_forcing_ratio', type=float, default=0.5)
 parser.add_argument('--share_embedding', action='store_true')
 parser.add_argument('--tied', action='store_true')
-parser.add_argument('--clip', type=float, default=5.0)
+parser.add_argument('--max_grad_norm', type=float, default=5.0)
 parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--q_max_len', type=int, default=60)
 parser.add_argument('--r_max_len', type=int, default=55)
@@ -54,10 +56,11 @@ parser.add_argument('--log', type=str, help='save log.')
 parser.add_argument('--seed', type=str, help='random seed')
 args = parser.parse_args()
 
-print("%s", ' '.join(sys.argv))
+print(' '.join(sys.argv))
 
 torch.random.manual_seed(args.seed)
 device = torch.device(args.device)
+print('device: {}'.format(device))
 
 # load vocab
 vocab = Vocab()
@@ -195,12 +198,12 @@ def train(epoch):
             lambda x: x.to(device), batch)
         # [batch_size, max_len]
 
-        dec_targets = dec_inputs[:, 1:]
-        dec_inputs = dec_inputs[:, :-1]
+        dec_targets = dec_inputs[1:, :]
+        dec_inputs = dec_inputs[:-1, :]
 
-        print('enc_inputs: ', enc_inputs.shape)
-        print('dec_inputs: ', dec_inputs.shape)
-        print('dec_targets: ', dec_targets.shape)
+        # print('enc_inputs: ', enc_inputs.shape)
+        # print('dec_inputs: ', dec_inputs.shape)
+        # print('dec_targets: ', dec_targets.shape)
 
         # forward
         optimizer.zero_grad()
@@ -255,8 +258,8 @@ def eval(epoch):
             enc_inputs, dec_inputs, enc_lengths, dec_lengths = map(
                 lambda x: x.to(device), batch)
 
-            dec_targets = dec_inputs[:, 1:]
-            dec_inputs = dec_inputs[:, :-1]
+            dec_targets = dec_inputs[1:, :]
+            dec_inputs = dec_inputs[:-1, :]
 
             dec_outputs = model(
                 enc_inputs,
@@ -300,8 +303,8 @@ def test(epoch):
             enc_inputs, dec_inputs, enc_lengths, dec_lengths = map(
                 lambda x: x.to(device), batch)
 
-            dec_targets = dec_inputs[:, 1:]
-            dec_inputs = dec_inputs[:, :-1]
+            dec_targets = dec_inputs[1:, :]
+            dec_inputs = dec_inputs[:-1, :]
 
             greedy_outputs, beam_outputs, beam_length = model.decode(
                 enc_inputs,

@@ -17,16 +17,17 @@ python train.py \
     --data_dir data/ \
     --log log/ \
     --embedding_size 128 \
-    --hidden_size 512 \
-    --num_layers 1 \
+    --hidden_size 256 \
+    --enc_num_layers 1 \
+    --dec_num_layers 1 \
     --bidirectional \
     --share_embedding \
     --dropout 0.0 \
-    --clip 5.0 \
     --lr 0.001 \
+    --max_grad_norm 5.0 \
     --q_max_len 60 \
     --r_max_len 55 \
-    --batch_size 128 \
+    --batch_size 64 \
     --epochs 20 \
     --lr_patience 3 \
     --es_patience 5 \

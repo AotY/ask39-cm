@@ -25,13 +25,19 @@ def cover():
         for i, line in enumerate(f):
             line = line.rstrip()
             if args.vocab:
-                _, value = line.split()
+                try:
+                    _, value = line.split()
+                except ValueError as e:
+                    continue
                 value = int(value)
                 total_value += value
                 if i < args.num:
                     cover_value += value
             else:
-                key, value = map(lambda x: int(x), line.split())
+                try:
+                    key, value = map(lambda x: int(x), line.split())
+                except ValueError as e:
+                    continue
                 total_value += value
                 if key <= args.num:
                     cover_value += value

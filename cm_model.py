@@ -59,7 +59,7 @@ class CMModel(nn.Module):
 
         # encoder, decode embedding share
         if config.share_embedding:
-            self.decoder.embedding.weight = self.encoder.embedding.weight
+            self.rnn_decoder.embedding.weight = self.rnn_encoder.embedding.weight
 
     def forward(self,
                 enc_inputs,
@@ -84,7 +84,7 @@ class CMModel(nn.Module):
         dec_hidden = self.reduce_state(enc_hidden)
 
         # decoder
-        dec_outputs, dec_hidden, _ = self.decoder(
+        dec_outputs, dec_hidden, _ = self.rnn_decoder(
             dec_inputs,
             dec_hidden,
             enc_outputs,
@@ -133,7 +133,7 @@ class CMModel(nn.Module):
         input = torch.ones((1, self.config.batch_size),
                                dtype=torch.long, device=self.device) * SOS_ID
         for i in range(self.config.max_len):
-            output, dec_hidden, _ = self.decoder(
+            output, dec_hidden, _ = self.rnn_decoder(
                 input,
                 dec_hidden,
                 enc_outputs,

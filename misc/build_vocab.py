@@ -27,7 +27,11 @@ def read_distribution():
     with open(args.vocab_freq_path, 'r') as f:
         for line in tqdm(f):
             line = line.rstrip()
-            word, freq = line.split()
+            try:
+                word, freq = line.split()
+            except Exception as e:
+                print(line)
+                print(e)
             freq = int(freq)
             freq_list.append((word, freq))
 

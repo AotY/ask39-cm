@@ -23,17 +23,20 @@ def load_data(config, vocab):
         with open(config.data_path, 'r') as f:
             for line in tqdm(f):
                 line = line.rstrip()
-                q_id, d_id, q, r, sub, gender, age, onset, label = line.split(
-                    ' SPLIT ')
+                q_id, d_id, q, r, sub, \
+                    gender, age, onset, label = line.split('SPLIT')
 
                 q_tokens = q.split()
+                q_tokens = [token for token in q_tokens if len(token.split()) > 0]
+                
                 r_tokens = r.split()
+                r_tokens = [token for token in r_tokens if len(token.split()) > 0]
 
                 q_ids = vocab.words_to_id(q_tokens)
                 r_ids = vocab.words_to_id(r_tokens)
 
                 datas.append((q_ids, r_ids))
-        pickle.dump(open(datas_pkl_path, 'wb'))
+        pickle.dump(datas, open(datas_pkl_path, 'wb'))
     else:
         datas = pickle.load(open(datas_pkl_path, 'rb'))
 
@@ -106,30 +109,29 @@ class MyCollate:
 
         for q_ids, r_ids in batch_pair:
 
-            enc_inputs.append(q_ids)
-            dec_inputs.append(r_ids)
+            q_ids = q_ids[-min(q_max_len, len(q_ids)):]
+            r_ids = r_ids[:min(r_max_len, len(r_ids))]
 
             enc_lengths.append(len(q_ids))
             dec_lengths.append(len(r_ids) + 1)
 
-        enc_inputs = np.array([
-            ids + [PAD_ID] * (q_max_len - len(ids))
-            for ids in enc_inputs
-        ])
+            # pad
+            q_ids = q_ids + [PAD_ID] * (q_max_len - len(q_ids))
+            r_ids = [SOS_ID] + r_ids + [EOS_ID] + [PAD_ID] * (r_max_len - len(r_ids))
+
+            enc_inputs.append(q_ids)
+            dec_inputs.append(r_ids)
+
+        enc_inputs = torch.tensor(enc_inputs, dtype=torch.long)
         # to [max_len, batch_size]
-        enc_inputs = enc_inputs.transpose()
+        enc_inputs = enc_inputs.transpose(0, 1)
+        # print(enc_inputs)
 
-        dec_inputs = np.array([
-            [SOS_ID] + ids + [EOS_ID] + [PAD_ID] * (r_max_len - len(ids))
-            for ids in dec_inputs
-        ])
+        dec_inputs = torch.tensor(dec_inputs, dtype=torch.long)
         # to [max_len, batch_size]
-        dec_inputs = dec_inputs.transpose()
+        dec_inputs = dec_inputs.transpose(0, 1)
 
-        enc_inputs = torch.LongTensor(enc_inputs)
-        dec_inputs = torch.LongTensor(dec_inputs)
-
-        enc_lengths = torch.LongTensor(enc_lengths)
-        dec_lengths = torch.LongTensor(dec_lengths)
+        enc_lengths = torch.tensor(enc_lengths, dtype=torch.long)
+        dec_lengths = torch.tensor(dec_lengths, dtype=torch.long)
 
         return enc_inputs, dec_inputs, enc_lengths, dec_lengths
