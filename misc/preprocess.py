@@ -42,15 +42,17 @@ def cleaning_stats():
     freq_dict = Counter()
 
     multi_turn_count = 0
-    cleaned_question_file = open(args.cleaned_question_path, 'w')
-    with open(args.raw_question_path, 'r') as f:
+    cleaned_question_file = open(args.cleaned_question_path, 'w', encoding='utf-8')
+    with open(args.raw_question_path, 'r', encoding='utf-8') as f:
         for line in tqdm(f):
             line = line.rstrip()
 
             try:
                 q_id, d_id, title, query, response, \
-                    sub, gender, age, onset, labels = line.split(' SPLIT ')
-            except ValueError:
+                    sub, gender, age, onset, labels = line.split('SPLIT')
+            except ValueError as e:
+                # print(line)
+                # print(e)
                 continue
 
             if not bool(query) or not bool(response):
@@ -63,8 +65,8 @@ def cleaning_stats():
 
             if q_id in q_ids_set:
                 continue
-
-            q_ids_set.add(q_id)
+            else:
+                q_ids_set.add(q_id)
 
             # query
             genders = re.findall(r'患者性别：\w', query)
