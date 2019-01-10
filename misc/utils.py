@@ -53,14 +53,28 @@ def generate_texts(vocab, batch_size, outputs, outputs_length=None, decode_type=
 
 
 def save_generated_texts(epoch,
+                         enc_texts,
                          greedy_texts,
                          beam_texts,
                          save_path):
+    """
+    enc_texts: [batch_size, max_len]
+    greedy_texts: [batch_size, max_len]
+    beam_texts: [batch_size, beam_size, max_len]
+    """
     save_mode = 'w'
     with open(save_path, save_mode, encoding='utf-8') as f:
-        for g_text, b_text in zip(greedy_texts, beam_texts):
+        for enc_text, g_text, b_text in zip(enc_texts, greedy_texts, beam_texts):
 
-            f.write('greedy: %s\n' % g_text)
+            # save query
+            f.write('query: %s\n' % enc_text)
+
+            f.write('greedy --> %s\n' % g_text)
 
             for i, text in enumerate(b_text):
-                f.write('beam %d: %s\n' % (i, text))
+                f.write('beam %d--> %s\n' % (i, text))
+
+            f.write('\n')
+
+
+

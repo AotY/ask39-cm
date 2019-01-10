@@ -11,6 +11,8 @@ __pycache__
 ### Data
 *.scel
 data/dict/
+data/generated/
+data/predicted/
 data/raw.question.txt
 data/raw.doctor.txt
 data/cleaned.question.txt

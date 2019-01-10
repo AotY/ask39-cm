@@ -326,6 +326,9 @@ def test(epoch):
             )
 
             # [batch_size, max_len]
+            enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1).tolist(), decode_type='greedy')
+
+            # [batch_size, max_len]
             greedy_texts = generate_texts(vocab, args.batch_size, greedy_outputs, decode_type='greedy')
 
             # [batch_size, topk, max_len]
@@ -333,7 +336,7 @@ def test(epoch):
 
             save_path = os.path.join(args.data_dir, 'generated/%d.txt' % epoch)
 
-            save_generated_texts(epoch, greedy_texts, beam_texts, save_path)
+            save_generated_texts(epoch, enc_texts, greedy_texts, beam_texts, save_path)
 
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
@@ -403,13 +406,14 @@ if __name__ == '__main__':
             '  - (checkpoint) epoch: {epoch: d} ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %'.\
             format(
                 epoch=epoch,
-                ppl=math.exp(min(valid_loss, 100)), 
+                ppl=math.exp(min(valid_loss, 100)),
                 accu=100*valid_accu,
               )
         )
-    
-    # args.mode = 'test'
-    # args.beam_size = 10
+
+    args.mode = 'test'
+    args.beam_size = 10
+
     if args.mode == 'train':
         train_epochs()
     elif args.mode == 'eval':
