@@ -1,5 +1,8 @@
 ### Python
 
+.DS_Store
+.ropeproject
+
 *.pyc
 __pycache__
 
