@@ -39,7 +39,7 @@ class Tokenizer:
         text = text.replace('，', ' ， ')
         text = text.replace('。', ' 。 ')
 
-        text = self.datetime_re.sub('__datetime__', text)
+        text = self.datetime_re.sub('DATETIME', text)
 
         tokens = list(jieba.cut(text))
         #  print(tokens)
@@ -49,7 +49,7 @@ class Tokenizer:
         for token in tokens:
             try:
                 float(token)
-                new_tokens.append('__number__')
+                new_tokens.append('NUMBER')
                 number_count += 1
             except ValueError as e:
                 new_tokens.append(token)

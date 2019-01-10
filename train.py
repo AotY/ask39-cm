@@ -25,6 +25,7 @@ from utils import generate_texts, save_generated_texts
 # Parse argument for language to train
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_path', type=str, help='')
+parser.add_argument('--vocab_path', type=str, help='')
 parser.add_argument('--vocab_size', type=int, help='')
 parser.add_argument('--embedding_size', type=int)
 parser.add_argument('--hidden_size', type=int)

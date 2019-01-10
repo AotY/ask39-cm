@@ -13,6 +13,7 @@ mkdir -p modles/
 
 python train.py \
     --data_path data/cleaned.question.txt \
+    --vocab_path data/vocab.id2word.dict \
     --data_dir data/ \
     --log log/ \
     --embedding_size 128 \
