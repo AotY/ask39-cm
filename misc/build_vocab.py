@@ -52,6 +52,7 @@ def build_vocab():
     vocab = Vocab()
     vocab.build_from_freq(freq_list)
     vocab.save(args.vocab_path)
+    print('vocab_size: ', vocab.size)
     return vocab
 
 
