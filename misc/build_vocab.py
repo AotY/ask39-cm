@@ -4,6 +4,8 @@
 #
 # Distributed under terms of the MIT license.
 
+import sys
+sys.path.append('.')
 import argparse
 from tqdm import tqdm
 from vocab import Vocab

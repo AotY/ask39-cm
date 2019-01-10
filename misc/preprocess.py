@@ -11,8 +11,8 @@ preprocessing
 import os
 import re
 import sys
-import argparse
 sys.path.append('.')
+import argparse
 
 from tqdm import tqdm
 from collections import Counter
