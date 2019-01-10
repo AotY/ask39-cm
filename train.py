@@ -66,6 +66,7 @@ print('device: {}'.format(device))
 vocab = Vocab()
 vocab.load(args.vocab_path)
 args.vocab_size = int(vocab.size)
+print('vocab_size: ', args.vocab_size)
 
 # load data
 datas = load_data(args, vocab)
@@ -201,7 +202,10 @@ def train(epoch):
         dec_targets = dec_inputs[1:, :]
         dec_inputs = dec_inputs[:-1, :]
 
-        # print('enc_inputs: ', enc_inputs.shape)
+        print('enc_inputs: ', enc_inputs.shape)
+        print(enc_inputs)
+        print(enc_lengths)
+
         # print('dec_inputs: ', dec_inputs.shape)
         # print('dec_targets: ', dec_targets.shape)
 
