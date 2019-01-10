@@ -40,4 +40,4 @@ def cover():
     print('cover ratio: %.5f' % cover_ratio)
 
 if __name__ == '__main__':
-
+    cover()

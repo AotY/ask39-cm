@@ -23,6 +23,8 @@ python train.py \
     --dropout 0.0 \
     --clip 5.0 \
     --lr 0.001 \
+    --q_max_len 60 \
+    --r_max_len 55 \
     --batch_size 128 \
     --epochs 20 \
     --lr_patience 3 \

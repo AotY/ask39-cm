@@ -65,7 +65,7 @@ class Vocab(object):
 
     '''save and restore'''
 
-    def save(self, path='vocab_idx2word.dict'):
+    def save(self, path='vocab.idx2word.dict'):
         if len(self.idx2word) == 0:
             raise RuntimeError("Save vocab after call build_from_freq()")
 

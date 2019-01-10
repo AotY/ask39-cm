@@ -14,7 +14,10 @@ data/dict/
 data/raw.question.txt
 data/raw.doctor.txt
 data/cleaned.question.txt
-data/*.dist
+data/*.dict
+data/*.pkl
+
+# data/*.dist
 
 
 ### log
