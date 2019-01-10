@@ -12,7 +12,7 @@ import sys
 
 
 
-def save_distribution(dis_list, save_path):
+def save_distribution(dist_list, save_path):
     with open(os.path.join(save_path), 'w', encoding="utf-8") as f:
         for i, j in dist_list:
             f.write('%s\t%s\n' % (str(i), str(j)))

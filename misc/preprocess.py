@@ -93,7 +93,7 @@ def cleaning_stats():
             q_tokens = tokenizer.tokenize(query)
             freq_dict.update(q_tokens)
             q_len_dict[len(q_tokens)] = q_len_dict.get(len(q_tokens), 0) + 1
-            if len(q_tokens) < args.min_len:
+            if len(q_tokens) < args.min_len or len(q_tokens) > args.q_max_len:
                 continue
 
             q = ' '.join(q_tokens)
@@ -102,7 +102,7 @@ def cleaning_stats():
             r_tokens = tokenizer.tokenize(response)
             freq_dict.update(r_tokens)
             r_len_dict[len(r_tokens)] = r_len_dict.get(len(r_tokens), 0) + 1
-            if len(r_tokens) < args.min_len:
+            if len(r_tokens) < args.min_len or len(r_tokens) > args.r_max_len:
                 continue
 
             r = ' '.join(r_tokens)
