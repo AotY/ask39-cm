@@ -45,13 +45,16 @@ parser.add_argument('--r_max_len', type=int, default=55)
 parser.add_argument('--batch_size', type=int, help='')
 parser.add_argument('--val_split', type=float, default=0.08)
 parser.add_argument('--test_split', type=int, default=5)
-parser.add_argument('--epochs', type=int)
+parser.add_argument('--epochs', type=int, default=20)
+parser.add_argument('--start_epoch', type=int, default=1)
 parser.add_argument('--lr_patience', type=int, help='Number of epochs with no improvement after which learning rate will be reduced')
 parser.add_argument('--es_patience', type=int, help='early stopping patience.')
 parser.add_argument('--device', type=str, help='cpu or cuda')
 parser.add_argument('--save_model', type=str, help='save path')
 parser.add_argument('--save_mode', type=str, choices=['all', 'best'], default='best')
+parser.add_argument('--checkpoint', type=str, help='checkpoint path')
 parser.add_argument('--smoothing', action='store_true')
+parser.add_argument('--task', type=str, help='train, valid, test')
 parser.add_argument('--log', type=str, help='save log.')
 parser.add_argument('--seed', type=str, help='random seed')
 args = parser.parse_args()
@@ -131,7 +134,7 @@ def train_epochs():
             log_vf.write('epoch,loss,ppl,accuracy\n')
 
     valid_accus = []
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(args.start_epoch, args.epochs + 1):
         print('[ Epoch', epoch, ']')
 
         start = time.time()
@@ -150,6 +153,9 @@ def train_epochs():
                   elapse=(time.time()-start)/60))
 
         valid_accus += [valid_accu]
+
+        # is early_stopping
+        is_stop = early_stopping.step(valid_loss)
 
         checkpoint = {
             'model': model.state_dict(),
@@ -178,6 +184,11 @@ def train_epochs():
                 log_vf.write('{epoch},{loss: 8.5f},{ppl: 8.5f},{accu:3.3f}\n'.format(
                     epoch=epoch, loss=valid_loss,
                     ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu))
+
+        if is_stop:
+            print('Early Stopping.')
+            sys.exit(0)
+
 
 # train
 
@@ -327,7 +338,7 @@ def test(epoch):
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
     # pred: [max_len * batch_size, vocab_size]
-    # gold: [max_len * batch_size]
+    # gold: [max_len, batch_size]
 
     loss = cal_loss(pred, gold, smoothing)
 
@@ -343,6 +354,7 @@ def cal_performance(pred, gold, smoothing=False):
 def cal_loss(pred, gold, smoothing):
     ''' Calculate cross entropy loss, apply label smoothing if needed. '''
 
+    # [max_len * batch_size]
     gold = gold.contiguous().view(-1)
 
     if smoothing:
@@ -364,4 +376,40 @@ def cal_loss(pred, gold, smoothing):
 
 
 if __name__ == '__main__':
-    train_epochs()
+    if args.checkpoint:
+        checkpoint = torch.load(args.checkpoint)
+        checkpoint = {
+            'model': model.state_dict(),
+            'settings': args,
+            'epoch': epoch,
+            'optimizer': optimizer.optimizer.state_dict(),
+            'valid_loss': valid_loss,
+            'valid_accu': valid_accu
+        }
+
+        modelcheckpoint_epoch.load_state_dict(checkpoint['model'])
+        optimizer.optimizer.load_state_dict(checkpoint['optimizer'])
+
+        args = checkpoint['settings']
+
+        epoch = checkpoint['epoch']
+        args.start_epoch = epoch + 1
+
+        valid_loss = checkpoint['valid_loss']
+        valid_accu = checkpoint['valid_accu']
+
+        print(
+            '  - (checkpoint) epoch: {epoch: d} ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %'.\
+            format(
+                epoch=epoch,
+                ppl=math.exp(min(valid_loss, 100)), 
+                accu=100*valid_accu,
+              )
+        )
+    
+    if args.task == 'train':
+        train_epochs()
+    elif args.task == 'valid':
+        valid()
+    elif args.task == 'test':
+        test()

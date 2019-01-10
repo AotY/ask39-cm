@@ -28,7 +28,10 @@ python train.py \
     --q_max_len 60 \
     --r_max_len 55 \
     --batch_size 64 \
+    --valid_split 0.08 \
+    --test_split 5 \
     --epochs 20 \
+    --start_epoch 1 \
     --lr_patience 3 \
     --es_patience 5 \
     --device cuda \
@@ -36,5 +39,8 @@ python train.py \
     --save_mode all \
     --save_model models/ \
     --smoothing \
+    --task test \
+    --checkpoint ./models/accu_36.093.pth \
+
 
 /
