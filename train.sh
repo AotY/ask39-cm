@@ -18,7 +18,7 @@ python train.py \
     --data_dir data/ \
     --log log/ \
     --embedding_size 128 \
-    --hidden_size 256 \
+    --hidden_size 512 \
     --enc_num_layers 1 \
     --dec_num_layers 1 \
     --bidirectional \
@@ -26,9 +26,10 @@ python train.py \
     --dropout 0.0 \
     --lr 0.001 \
     --max_grad_norm 5.0 \
-    --q_max_len 60 \
-    --r_max_len 55 \
-    --batch_size 64 \
+    --min_len 5 \
+    --q_max_len 65 \
+    --r_max_len 58 \
+    --batch_size 128 \
     --valid_split 0.08 \
     --test_split 5 \
     --epochs 20 \
@@ -41,7 +42,7 @@ python train.py \
     --save_model models/ \
     --smoothing \
     --mode train \
-    --checkpoint ./models/accu_36.093.pth \
+    #--checkpoint ./models/accu_36.093.pth \
 
 
 /

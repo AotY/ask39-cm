@@ -13,6 +13,7 @@ import re
 import sys
 sys.path.append('.')
 import argparse
+import random
 
 from tqdm import tqdm
 from collections import Counter
@@ -43,10 +44,10 @@ def cleaning_stats():
 
     multi_turn_count = 0
     cleaned_question_file = open(args.cleaned_question_path, 'w', encoding='utf-8')
+    cleaned_questions = list()
     with open(args.raw_question_path, 'r', encoding='utf-8') as f:
         for line in tqdm(f):
             line = line.rstrip()
-
             try:
                 q_id, d_id, title, query, response, \
                     sub, gender, age, onset, labels = line.split('SPLIT')
@@ -135,8 +136,17 @@ def cleaning_stats():
                 onset = ' '.join(onset_tokens)
 
             #  print('q_id: %s' % q_id)
-            cleaned_question_file.write('%s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s\n' % \
-                                        (q_id, d_id, q, r, sub, gender, age, onset, label))
+            cleaned_questions.append((q_id, d_id, q, r, sub, gender, age, onset, label))
+            
+    # shuffle
+    random.shuffle(cleaned_questions)
+
+    # re write
+    for item in cleaned_questions:
+        q_id, d_id, q, r, sub, gender, age, onset, label = item
+
+        cleaned_question_file.write('%s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s SPLIT %s\n' % \
+                                    (q_id, d_id, q, r, sub, gender, age, onset, label))
 
     cleaned_question_file.close()
     print('multi_turn_count: %d' % multi_turn_count)

@@ -28,9 +28,13 @@ def load_data(config, vocab):
 
                 q_tokens = q.split()
                 q_tokens = [token for token in q_tokens if len(token.split()) > 0]
+                if len(q_tokens) < config.min_len:
+                    continue
                 
                 r_tokens = r.split()
                 r_tokens = [token for token in r_tokens if len(token.split()) > 0]
+                if len(r_tokens) < config.min_len:
+                    continue
 
                 q_ids = vocab.words_to_id(q_tokens)
                 r_ids = vocab.words_to_id(r_tokens)

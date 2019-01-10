@@ -16,9 +16,9 @@ class Tokenizer:
         if userdict_path is not None:
             jieba.load_userdict(userdict_path)
 
-        self.MAX_NUMBER_COUNT = 10
+        self.MAX_NUMBER_COUNT = 12
 
-        self.datetime_regex_str = r'\d{4}-\d{2}-\d{2}\s?\d{2}:\d{2}:\d{2}'
+        self.datetime_regex_str = r'\d{4}-?\d{2}-?\d{2}\s?\d{2}:\d{2}:\d{2}'
         self.datetime_re = re.compile(self.datetime_regex_str)
 
     def tokenize(self, text):
@@ -42,7 +42,10 @@ class Tokenizer:
         text = self.datetime_re.sub('DATETIME', text)
 
         tokens = list(jieba.cut(text))
-        #  print(tokens)
+        tokens = [token for token in tokens if len(token.split()) > 0]
+        if len(tokens) == 0:
+            return []
+
 
         new_tokens = []
         number_count = 0
@@ -55,7 +58,20 @@ class Tokenizer:
                 new_tokens.append(token)
                 continue
 
-        if number_count > self.MAX_NUMBER_COUNT:
-            return '' # merge multi to single
+        if number_count >= self.MAX_NUMBER_COUNT:
+            return [] # merge multi to single
+
+        tokens = new_tokens
+
+        text = ' '.join(tokens)
+        text = text.replace('( NUMBER )', 'NUMBER')
+        text = re.sub(r'(\s?NUMBER\s?)+', ' NUMBER ', text)
+        text = re.sub(r'(\s?NUMBER NUMBER\s?)+', ' NUMBER ', text)
+        text = re.sub(r'NUMBER\w+', 'NUMBER', text)
+        text = re.sub(r'\w+NUMBER', 'NUMBER', text)
+        text = re.sub(r'NUMBER \S NUMBER', 'NUMBER', text)
+
+        tokens = text.split()
+        # print(tokens)
 
         return tokens

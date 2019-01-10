@@ -5,10 +5,10 @@
 # Distributed under terms of the MIT license.
 import pickle
 
-PAD = '__pad__'
-UNK = '__unk__'
-SOS = '__sos__'
-EOS = '__eos__'
+PAD = 'PAD'
+UNK = 'UNK'
+SOS = 'SOS'
+EOS = 'EOS'
 
 PAD_ID = 0
 UNK_ID = 1

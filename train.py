@@ -39,6 +39,7 @@ parser.add_argument('--share_embedding', action='store_true')
 parser.add_argument('--tied', action='store_true')
 parser.add_argument('--max_grad_norm', type=float, default=5.0)
 parser.add_argument('--lr', type=float, default=0.001)
+parser.add_argument('--min_len', type=int, default=5)
 parser.add_argument('--q_max_len', type=int, default=60)
 parser.add_argument('--r_max_len', type=int, default=55)
 parser.add_argument('--beam_size', type=int, default=10)
@@ -326,7 +327,7 @@ def test(epoch):
             )
 
             # [batch_size, max_len]
-            enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1).tolist(), decode_type='greedy')
+            enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
             greedy_texts = generate_texts(vocab, args.batch_size, greedy_outputs, decode_type='greedy')
@@ -411,8 +412,8 @@ if __name__ == '__main__':
               )
         )
 
-    args.mode = 'test'
-    args.beam_size = 10
+    # args.mode = 'test'
+    # args.beam_size = 10
 
     if args.mode == 'train':
         train_epochs()
