@@ -62,6 +62,8 @@ args = parser.parse_args()
 
 print(' '.join(sys.argv))
 
+mode = args.mode
+
 torch.random.manual_seed(args.seed)
 device = torch.device(args.device)
 print('device: {}'.format(device))
@@ -330,7 +332,7 @@ def infer(epoch):
             enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
-            dec_texts = generate_texts(vocab, args.batch_size, dec_targets, decode_type='greedy')
+            dec_texts = generate_texts(vocab, args.batch_size, dec_targets.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
             greedy_texts = generate_texts(vocab, args.batch_size, greedy_outputs, decode_type='greedy')
@@ -415,8 +417,7 @@ if __name__ == '__main__':
               )
         )
 
-    # args.mode = 'infer'
-    # args.beam_size = 10
+    args.mode = mode
 
     if args.mode == 'train':
         train_epochs()

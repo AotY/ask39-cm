@@ -74,14 +74,20 @@ def cleaning_stats():
             # query
             genders = re.findall(r'患者性别[:：]\w', query)
             if genders is not None and len(genders) > 0:
-                gender = genders[0].split('：')[1]
-                print('gender: %s' % gender)
+                try:
+                    gender = genders[0].split('：')[1]
+                except IndexError as e:
+                    gender = genders[0].split(':')[1]
+                # print('gender: %s' % gender)
                 query = re.sub(r'患者性别[:：]\w', '', query)
 
             ages = re.findall(r'患者年龄[:：]\d+', query)
             if ages is not None and len(ages) > 0:
-                age = ages[0].split('：')[1]
-                print('age: %s' % age)
+                try:
+                    age = ages[0].split('：')[1]
+                except IndexError as e:
+                    age = ages[0].split(':')[1]
+                # print('age: %s' % age)
                 query = re.sub(r'患者年龄[:：]\d+', '', query)
 
             freq_dict.update(gender)
