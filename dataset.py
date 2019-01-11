@@ -27,12 +27,14 @@ def load_data(config, vocab):
                     gender, age, onset, label = line.split('SPLIT')
 
                 q_tokens = q.split()
-                q_tokens = [token for token in q_tokens if len(token.split()) > 0]
+                #  q_tokens = [token for token in q_tokens if len(token.split()) > 0]
+                q_tokens = [token.split()[0] for token in q_tokens if len(token.split()) > 0]
                 if len(q_tokens) < config.min_len:
                     continue
-                
+
                 r_tokens = r.split()
-                r_tokens = [token for token in r_tokens if len(token.split()) > 0]
+                #  r_tokens = [token for token in r_tokens if len(token.split()) > 0]
+                r_tokens = [token.split()[0] for token in r_tokens if len(token.split()) > 0]
                 if len(r_tokens) < config.min_len:
                     continue
 

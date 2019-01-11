@@ -21,12 +21,16 @@ class Tokenizer:
         self.datetime_regex_str = r'\d{4}-?\d{2}-?\d{2}\s?\d{2}:\d{2}:\d{2}'
         self.datetime_re = re.compile(self.datetime_regex_str)
 
+        self.url_regex_str = r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+' # URLs
+        self.url_re = re.compile(self.url_regex_str)
+
     def tokenize(self, text):
         if isinstance(text, list):
             text = ' '.join(text)
 
         tokens = self.clean_str(text)
-        tokens = [token for token in tokens if len(token.split()) > 0]
+        #  tokens = [token for token in tokens if len(token.split()) > 0]
+        tokens = [token.split()[0] for token in tokens if len(token.split()) > 0]
         return tokens
 
     def clean_str(self, text):
@@ -39,13 +43,14 @@ class Tokenizer:
         text = text.replace('，', ' ， ')
         text = text.replace('。', ' 。 ')
 
+        text = self.url_re.sub('URL', text)
+
         text = self.datetime_re.sub('DATETIME', text)
 
         tokens = list(jieba.cut(text))
-        tokens = [token for token in tokens if len(token.split()) > 0]
+        tokens = [token.split()[0] for token in tokens if len(token.split()) > 0]
         if len(tokens) == 0:
             return []
-
 
         new_tokens = []
         number_count = 0
@@ -64,7 +69,7 @@ class Tokenizer:
         tokens = new_tokens
 
         text = ' '.join(tokens)
-        text = text.replace('( NUMBER )', 'NUMBER')
+        #  text = text.replace('( NUMBER )', 'NUMBER')
         text = re.sub(r'(\s?NUMBER\s?)+', ' NUMBER ', text)
         text = re.sub(r'(\s?NUMBER NUMBER\s?)+', ' NUMBER ', text)
         text = re.sub(r'NUMBER\w+', 'NUMBER', text)

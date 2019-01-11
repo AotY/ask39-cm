@@ -72,28 +72,31 @@ def cleaning_stats():
             #  print('q_id: %s' % q_id)
 
             # query
-            genders = re.findall(r'患者性别：\w', query)
+            genders = re.findall(r'患者性别[:：]\w', query)
             if genders is not None and len(genders) > 0:
                 gender = genders[0].split('：')[1]
-                #  print('gender: %s' % gender)
-                query = re.sub(r'患者性别：\w', '', query)
+                print('gender: %s' % gender)
+                query = re.sub(r'患者性别[:：]\w', '', query)
 
-            ages = re.findall(r'患者年龄：\d+', query)
+            ages = re.findall(r'患者年龄[:：]\d+', query)
             if ages is not None and len(ages) > 0:
                 age = ages[0].split('：')[1]
-                #  print('age: %s' % age)
-                query = re.sub(r'患者年龄：\d+', '', query)
+                print('age: %s' % age)
+                query = re.sub(r'患者年龄[:：]\d+', '', query)
 
-            freq_dict.update(genders)
+            freq_dict.update(gender)
             freq_dict.update(age)
 
-            query = re.sub(r'问题描述：', '', query)
-            query = re.sub(r'详细病情及咨询目的：', '', query)
-            query = re.sub(r'本次发病及持续的时间：', ' 。', query)
-            query = re.sub(r'病史：', ' 。', query)
-            query = re.sub(r'目前一般情况：', ' 。', query)
-            query = re.sub(r'细病情及咨询目的：', ' 。', query)
-            query = re.sub(r'以往的诊断和治疗经过及效果：', ' 。', query)
+            query = re.sub(r'问题描述[:：]', '', query)
+            query = re.sub(r'主要症状[:：]', '', query)
+            query = re.sub(r'发病时间[:：]', '', query)
+            query = re.sub(r'详细病情及咨询目的[:：]', '', query)
+            query = re.sub(r'本次发病及持续的时间[:：]', ' 。', query)
+            query = re.sub(r'病史[:：]', ' 。', query)
+            query = re.sub(r'目前一般情况[:：]', ' 。', query)
+            query = re.sub(r'细病情及咨询目的[:：]', ' 。', query)
+            query = re.sub(r'以往的诊断和治疗经过及效果[:：]', ' 。', query)
+            query = re.sub(r'[\[【]本贴已经被.+]', '', query)
 
             q_tokens = tokenizer.tokenize(query)
             freq_dict.update(q_tokens)
@@ -129,7 +132,7 @@ def cleaning_stats():
             label = ' '.join(label_tokens)
 
             # onset
-            onset = re.sub(r'发病时间：不清楚', '', onset)
+            onset = re.sub(r'发病时间[:：]不清楚', '', onset)
             if onset != '':
                 onset_tokens = tokenizer.tokenize(onset)
                 freq_dict.update(onset_tokens)

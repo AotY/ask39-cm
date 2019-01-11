@@ -330,6 +330,9 @@ def test(epoch):
             enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
+            dec_texts = generate_texts(vocab, args.batch_size, dec_targets, decode_type='greedy')
+
+            # [batch_size, max_len]
             greedy_texts = generate_texts(vocab, args.batch_size, greedy_outputs, decode_type='greedy')
 
             # [batch_size, topk, max_len]
@@ -337,7 +340,7 @@ def test(epoch):
 
             save_path = os.path.join(args.data_dir, 'generated/%d.txt' % epoch)
 
-            save_generated_texts(epoch, enc_texts, greedy_texts, beam_texts, save_path)
+            save_generated_texts(epoch, enc_texts, dec_texts, greedy_texts, beam_texts, save_path)
 
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''

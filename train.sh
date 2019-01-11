@@ -41,8 +41,8 @@ python train.py \
     --save_mode all \
     --save_model models/ \
     --smoothing \
-    --mode train \
-    #--checkpoint ./models/accu_36.093.pth \
+    --mode test \
+    --checkpoint ./models/accu_43.684.pth \
 
 
 /
