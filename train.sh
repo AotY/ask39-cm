@@ -42,7 +42,7 @@ python train.py \
     --save_model models/ \
     --smoothing \
     --mode infer \
-    --checkpoint ./models/accu_43.684.pth \
+    --checkpoint ./models/accu_43.850.pth \
 
 
 /
