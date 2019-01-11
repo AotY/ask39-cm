@@ -32,7 +32,7 @@ python train.py \
     --batch_size 128 \
     --valid_split 0.08 \
     --test_split 5 \
-    --epochs 20 \
+    --epochs 25 \
     --start_epoch 1 \
     --lr_patience 3 \
     --es_patience 5 \

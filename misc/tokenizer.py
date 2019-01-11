@@ -10,6 +10,7 @@ Tokenizer
 import re
 import jieba
 
+
 class Tokenizer:
     def __init__(self, userdict_path=None):
         # load user dict
@@ -21,7 +22,11 @@ class Tokenizer:
         self.datetime_regex_str = r'\d{4}-?\d{2}-?\d{2}\s?\d{2}:\d{2}:\d{2}'
         self.datetime_re = re.compile(self.datetime_regex_str)
 
-        self.url_regex_str = r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+' # URLs
+        #  self.url_regex_str = r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+' # URLs
+        #  '((ftp|http|https):\/\/)?'
+
+        self.url_regex_str = r'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()[]{};:\'".,<>?\xab\xbb\u201c\u201d\u2018\u2019]))'
+
         self.url_re = re.compile(self.url_regex_str)
 
     def tokenize(self, text):
@@ -30,7 +35,8 @@ class Tokenizer:
 
         tokens = self.clean_str(text)
         #  tokens = [token for token in tokens if len(token.split()) > 0]
-        tokens = [token.split()[0] for token in tokens if len(token.split()) > 0]
+        tokens = [token.split()[0]
+                  for token in tokens if len(token.split()) > 0]
         return tokens
 
     def clean_str(self, text):
@@ -43,12 +49,13 @@ class Tokenizer:
         text = text.replace('，', ' ， ')
         text = text.replace('。', ' 。 ')
 
-        text = self.url_re.sub('URL', text)
-
         text = self.datetime_re.sub('DATETIME', text)
 
+        text = self.url_re.sub('URL', text)
+
         tokens = list(jieba.cut(text))
-        tokens = [token.split()[0] for token in tokens if len(token.split()) > 0]
+        tokens = [token.split()[0]
+                  for token in tokens if len(token.split()) > 0]
         if len(tokens) == 0:
             return []
 
@@ -64,7 +71,7 @@ class Tokenizer:
                 continue
 
         if number_count >= self.MAX_NUMBER_COUNT:
-            return [] # merge multi to single
+            return []  # merge multi to single
 
         tokens = new_tokens
 

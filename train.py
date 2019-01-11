@@ -48,11 +48,13 @@ parser.add_argument('--valid_split', type=float, default=0.08)
 parser.add_argument('--test_split', type=int, default=5)
 parser.add_argument('--epochs', type=int, default=20)
 parser.add_argument('--start_epoch', type=int, default=1)
-parser.add_argument('--lr_patience', type=int, help='Number of epochs with no improvement after which learning rate will be reduced')
+parser.add_argument('--lr_patience', type=int,
+                    help='Number of epochs with no improvement after which learning rate will be reduced')
 parser.add_argument('--es_patience', type=int, help='early stopping patience.')
 parser.add_argument('--device', type=str, help='cpu or cuda')
 parser.add_argument('--save_model', type=str, help='save path')
-parser.add_argument('--save_mode', type=str, choices=['all', 'best'], default='best')
+parser.add_argument('--save_mode', type=str,
+                    choices=['all', 'best'], default='best')
 parser.add_argument('--checkpoint', type=str, help='checkpoint path')
 parser.add_argument('--smoothing', action='store_true')
 parser.add_argument('--log', type=str, help='save log.')
@@ -70,7 +72,7 @@ print('device: {}'.format(device))
 vocab = Vocab()
 vocab.load(args.vocab_path)
 args.vocab_size = int(vocab.size)
-print('vocab_size: ', args.vocab_size)
+print('vocab size: ', args.vocab_size)
 
 # load data
 datas = load_data(args, vocab)
@@ -117,6 +119,8 @@ early_stopping = EarlyStopping(
 )
 
 # train epochs
+
+
 def train_epochs():
     ''' Start training '''
     log_train_file = None
@@ -130,7 +134,7 @@ def train_epochs():
             log_train_file, log_valid_file))
 
         with open(log_train_file, 'w') as log_tf, \
-            open(log_valid_file, 'w') as log_vf:
+                open(log_valid_file, 'w') as log_vf:
             log_tf.write('epoch,loss,ppl,accuracy\n')
             log_vf.write('epoch,loss,ppl,accuracy\n')
 
@@ -143,15 +147,19 @@ def train_epochs():
 
         print(' (Training)   ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
               'elapse: {elapse:3.3f} min'.format(
-                  ppl=math.exp(min(train_loss, 100)), accu=100*train_accu,
-                  elapse=(time.time()-start)/60))
+                  ppl=math.exp(min(train_loss, 100)),
+                  accu=100*train_accu,
+                  elapse=(time.time()-start)/60)
+              )
 
         start = time.time()
         valid_loss, valid_accu = eval(epoch)
-        print('  - (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
+        print(' (Validation) ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %, '
               'elapse: {elapse:3.3f} min'.format(
-                  ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu,
-                  elapse=(time.time()-start)/60))
+                  ppl=math.exp(min(valid_loss, 100)),
+                  accu=100*valid_accu,
+                  elapse=(time.time()-start)/60)
+              )
 
         valid_accus += [valid_accu]
 
@@ -163,13 +171,17 @@ def train_epochs():
             'settings': args,
             'epoch': epoch,
             'optimizer': optimizer.optimizer.state_dict(),
+            'early_stopping': early_stopping,
             'valid_loss': valid_loss,
             'valid_accu': valid_accu
         }
 
         if args.save_model:
             if args.save_mode == 'all':
-                model_name = os.path.join(args.save_model, 'accu_{accu:3.3f}.pth'.format(accu=100*valid_accu))
+                model_name = os.path.join(
+                    args.save_model,
+                    'accu_{accu:3.3f}.pth'.format(accu=100*valid_accu)
+                )
                 torch.save(checkpoint, model_name)
             elif args.save_mode == 'best':
                 model_name = os.path.join(args.save_model, 'best.pth')
@@ -179,15 +191,21 @@ def train_epochs():
 
         if log_train_file and log_valid_file:
             with open(log_train_file, 'a') as log_tf, open(log_valid_file, 'a') as log_vf:
-                log_tf.write('{epoch},{loss: 8.5f},{ppl: 8.5f},{accu:3.3f}\n'.format(
-                    epoch=epoch, loss=train_loss,
-                    ppl=math.exp(min(train_loss, 100)), accu=100*train_accu))
-                log_vf.write('{epoch},{loss: 8.5f},{ppl: 8.5f},{accu:3.3f}\n'.format(
-                    epoch=epoch, loss=valid_loss,
-                    ppl=math.exp(min(valid_loss, 100)), accu=100*valid_accu))
+                log_tf.write('{epoch}, {loss: 8.5f}, {ppl: 8.5f}, {accu:3.3f}\n'.format(
+                    epoch=epoch,
+                    loss=train_loss,
+                    ppl=math.exp(min(train_loss, 100)),
+                    accu=100*train_accu)
+                )
+                log_vf.write('{epoch}, {loss: 8.5f}, {ppl: 8.5f}, {accu:3.3f}\n'.format(
+                    epoch=epoch,
+                    loss=valid_loss,
+                    ppl=math.exp(min(valid_loss, 100)),
+                    accu=100*valid_accu)
+                )
 
         if is_stop:
-            print('Early Stopping.')
+            print('Early Stopping.\n')
             sys.exit(0)
 
 
@@ -302,6 +320,7 @@ def eval(epoch):
     accuracy = n_word_correct/n_word_total
     return loss_per_word, accuracy
 
+
 def infer(epoch):
     ''' Epoch operation in infer phase '''
     model.eval()
@@ -327,20 +346,26 @@ def infer(epoch):
             )
 
             # [batch_size, max_len]
-            enc_texts = generate_texts(vocab, args.batch_size, enc_inputs.transpose(0, 1), decode_type='greedy')
+            enc_texts = generate_texts(
+                vocab, args.batch_size, enc_inputs.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
-            dec_texts = generate_texts(vocab, args.batch_size, dec_targets, decode_type='greedy')
+            dec_texts = generate_texts(
+                vocab, args.batch_size, dec_targets.transpose(0, 1), decode_type='greedy')
 
             # [batch_size, max_len]
-            greedy_texts = generate_texts(vocab, args.batch_size, greedy_outputs, decode_type='greedy')
+            greedy_texts = generate_texts(
+                vocab, args.batch_size, greedy_outputs, decode_type='greedy')
 
             # [batch_size, topk, max_len]
-            beam_texts = generate_texts(vocab, args.batch_size, beam_outputs, decode_type='beam_search')
+            beam_texts = generate_texts(
+                vocab, args.batch_size, beam_outputs, decode_type='beam_search')
 
             save_path = os.path.join(args.data_dir, 'generated/%d.txt' % epoch)
 
-            save_generated_texts(epoch, enc_texts, dec_texts, greedy_texts, beam_texts, save_path)
+            save_generated_texts(epoch, enc_texts, dec_texts,
+                                 greedy_texts, beam_texts, save_path)
+
 
 def cal_performance(pred, gold, smoothing=False):
     ''' Apply label smoothing if needed '''
@@ -383,20 +408,16 @@ def cal_loss(pred, gold, smoothing):
 
 
 if __name__ == '__main__':
+    mode = args.mode
+
     if args.checkpoint:
         print('load checkpoint...')
         checkpoint = torch.load(args.checkpoint)
-        # checkpoint = {
-            # 'model': model.state_dict(),
-            # 'settings': args,
-            # 'epoch': epoch,
-            # 'optimizer': optimizer.optimizer.state_dict(),
-            # 'valid_loss': valid_loss,
-            # 'valid_accu': valid_accu
-        # }
 
         model.load_state_dict(checkpoint['model'])
         optimizer.optimizer.load_state_dict(checkpoint['optimizer'])
+
+        #  early_stopping = checkpoint['early_stopping']
 
         args = checkpoint['settings']
 
@@ -407,16 +428,15 @@ if __name__ == '__main__':
         valid_accu = checkpoint['valid_accu']
 
         print(
-            '  - (checkpoint) epoch: {epoch: d} ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %'.\
+            '  - (checkpoint) epoch: {epoch: d} ppl: {ppl: 8.5f}, accuracy: {accu:3.3f} %'.
             format(
                 epoch=epoch,
                 ppl=math.exp(min(valid_loss, 100)),
                 accu=100*valid_accu,
-              )
+            )
         )
 
-    # args.mode = 'infer'
-    # args.beam_size = 10
+    args.mode = mode
 
     if args.mode == 'train':
         train_epochs()
