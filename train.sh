@@ -41,7 +41,7 @@ python train.py \
     --save_mode all \
     --save_model models/ \
     --smoothing \
-    --mode test \
+    --mode infer \
     --checkpoint ./models/accu_43.684.pth \
 
 

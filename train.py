@@ -57,7 +57,7 @@ parser.add_argument('--checkpoint', type=str, help='checkpoint path')
 parser.add_argument('--smoothing', action='store_true')
 parser.add_argument('--log', type=str, help='save log.')
 parser.add_argument('--seed', type=str, help='random seed')
-parser.add_argument('--mode', type=str, help='train, eval, test')
+parser.add_argument('--mode', type=str, help='train, eval, infer')
 args = parser.parse_args()
 
 print(' '.join(sys.argv))
@@ -302,8 +302,8 @@ def eval(epoch):
     accuracy = n_word_correct/n_word_total
     return loss_per_word, accuracy
 
-def test(epoch):
-    ''' Epoch operation in TEST phase '''
+def infer(epoch):
+    ''' Epoch operation in infer phase '''
     model.eval()
 
     total_loss = 0
@@ -313,7 +313,7 @@ def test(epoch):
     with torch.no_grad():
         for batch in tqdm(
                 test_data, mininterval=2,
-                desc=' (TEST: %d) ' % epoch, leave=False):
+                desc=' (INFER: %d) ' % epoch, leave=False):
 
             enc_inputs, dec_inputs, enc_lengths, dec_lengths = map(
                 lambda x: x.to(device), batch)
@@ -415,12 +415,12 @@ if __name__ == '__main__':
               )
         )
 
-    # args.mode = 'test'
+    # args.mode = 'infer'
     # args.beam_size = 10
 
     if args.mode == 'train':
         train_epochs()
     elif args.mode == 'eval':
         eval(epoch)
-    elif args.mode == 'test':
-        test(epoch)
+    elif args.mode == 'infer':
+        infer(epoch)
