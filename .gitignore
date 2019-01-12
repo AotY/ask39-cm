@@ -26,4 +26,5 @@ data/*.pkl
 log/
 
 ### models
-models/*.pth
+models/
+*.pth

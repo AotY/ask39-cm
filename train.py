@@ -171,7 +171,7 @@ def train_epochs():
             'settings': args,
             'epoch': epoch,
             'optimizer': optimizer.optimizer.state_dict(),
-            'early_stopping': early_stopping,
+            # 'early_stopping': early_stopping,
             'valid_loss': valid_loss,
             'valid_accu': valid_accu
         }
